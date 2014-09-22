@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<generic-plugin name="agent-cleanup"
+                displayName="Agent:Cleanup"
+                description="Removes agents that have never connected or not connected very recently"
+                package="com.apple.iad.rhq.agent.cleanup"
+                version="1.0"
+                apiVersion="2.0"
+                disabledOnDiscovery="true"
+                xmlns="urn:xmlns:rhq-serverplugin.generic"
+                xmlns:serverplugin="urn:xmlns:rhq-serverplugin"
+                xmlns:c="urn:xmlns:rhq-configuration">
+
+    <serverplugin:help><![CDATA[
+        Contains controls for cleaning up agents that may have connected
+        (and failed to register) or agents that have not connected very
+        recently, or agents that were backfilled (due to transaction timeouts, etc.)
+        but are really alive.
+    ]]></serverplugin:help>
+
+    <serverplugin:plugin-component class="AgentCleanup">
+        <serverplugin:control name="remove" description="Remove an agent">
+            <serverplugin:parameters>
+                <c:simple-property name="name" description="Name of agent" type="string" required="true" readOnly="false" />
+            </serverplugin:parameters>
+        </serverplugin:control>
+        <serverplugin:control name="cleanup" description="Triggers cleanup of old or missing agents.">
+        </serverplugin:control>
+        <serverplugin:control name="unbackfill" description="Triggers unbackfilling operation.">
+        </serverplugin:control>
+        <serverplugin:control name="update" description="Updates plugins on agents.">
+        </serverplugin:control>
+        <serverplugin:control name="compress" description="Runs metrics compression.">
+        </serverplugin:control>
+    </serverplugin:plugin-component>
+
+    <serverplugin:scheduled-jobs>
+
+        <c:map-property name="process" description="Processes cleanup">
+            <c:simple-property name="scheduleType" type="string" required="true" readOnly="true" default="cron" summary="true" />
+            <!--             S M H Day Mon Weekday [Year] -->
+            <c:simple-property name="scheduleTrigger" type="string" required="true"
+                    default="0 0 1 ? * SUN" summary="true" description="Quartz Cron expression"/>
+            <c:simple-property name="concurrent" type="boolean" required="true" readOnly="true" default="false" summary="true"
+                    description="Whether or not the job can be run multiple times concurrently"/>
+        </c:map-property>
+
+        <c:map-property name="unbackfill" description="Unbackfill job">
+            <c:simple-property name="scheduleType" type="string" required="true" readOnly="true" default="cron" summary="true" />
+            <!--             S M H Day Mon Weekday [Year] -->
+            <c:simple-property name="scheduleTrigger" type="string" required="true"
+                    default="0 0 * *    *    ?" summary="true" description="Quartz Cron expression"/>
+            <c:simple-property name="concurrent" type="boolean" required="true" readOnly="true" default="false" summary="true"
+                    description="Whether or not the job can be run multiple times concurrently"/>
+        </c:map-property>
+
+    </serverplugin:scheduled-jobs>
+
+    <!-- custom global config -->
+    <serverplugin:plugin-configuration>
+        <c:simple-property units="days" type="integer" default="30" name="expiration" required="true"
+          description="Default time to remove agents with availability ping or report older than this, in days"/>
+        <c:simple-property units="hours" type="integer" default="1" name="olderThan" required="true"
+          description="Ignore agents created newer than this time window, in hours"/>
+        <c:simple-property type="boolean" default="true" name="none" required="true"
+          description="Remove agents that have no availability information."/>
+        <c:simple-property type="integer" default="5000" name="pingTimeout" units="milliseconds" required="true"
+          description="Request full inventory report for backfilled agents that have ping time less time than this."/>
+    </serverplugin:plugin-configuration>
+
+</generic-plugin>

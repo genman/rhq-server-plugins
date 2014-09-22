@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <parent>
+      <groupId>com.apple.iad</groupId>
+      <artifactId>iad-server-plugins-parent</artifactId>
+      <version>5.0.3-SNAPSHOT</version>
+      <relativePath>../pom.xml</relativePath>
+   </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.apple.iad</groupId>
+    <artifactId>resource-errors</artifactId>
+
+    <name>RHQ Enterprise Server Tagged Resource Errors Cleanup or Report Plugin</name>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludedGroups>${rhq.testng.excludedGroups}</excludedGroups>
+                </configuration>
+            </plugin>
+
+         <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+               <execution>
+                  <phase>integration-test</phase>
+                  <configuration>
+                     <target>
+                        <property name="test.classpath" refid="maven.test.classpath" />
+                        <echo>Validating plugins...</echo>
+                        <java classname="org.rhq.enterprise.server.plugin.pc.ServerPluginValidatorUtil" failonerror="true" fork="true">
+                           <classpath>
+                              <pathelement path="${test.classpath}" />
+
+                              <!-- See also: https://docs.jboss.org/author/display/RHQ/Design-Server+Side+Plugins#Design-ServerSidePlugins-xmlschemas -->
+
+                              <pathelement location="target/alert-tag-${project.version}.jar" />
+                           </classpath>
+                           <sysproperty key="org.apache.commons.logging.Log" value="org.apache.commons.logging.impl.SimpleLog" />
+                           <sysproperty key="rhq.test.serverplugins" value="${rhq.test.serverplugins}" />
+                           <!--
+                           <jvmarg line="-Xdebug -Xrunjdwp:transport=dt_socket,address=8797,server=y,suspend=y" />
+                           -->
+                        </java>
+                     </target>
+                  </configuration>
+                  <goals>
+                     <goal>run</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+
+      </plugins>
+
+    </build>
+
+   <dependencies>
+     <dependency>
+       <groupId>org.rhq</groupId>
+       <artifactId>rhq-enterprise-server</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.rhq</groupId>
+       <artifactId>rhq-core-domain</artifactId>
+     </dependency>
+
+     <dependency>
+         <groupId>org.rhq</groupId>
+         <artifactId>alert-subject</artifactId>
+     </dependency>
+     <dependency>
+         <groupId>org.rhq.server</groupId>
+         <artifactId>alert-email</artifactId>
+     </dependency>
+   </dependencies>
+
+</project>

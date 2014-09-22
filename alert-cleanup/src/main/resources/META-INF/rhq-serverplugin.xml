@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<generic-plugin name="alert-cleanup"
+                displayName="Alert:Cleanup"
+                description="Ack's existing alerts for resources up, fires new alerts for resource with availability down"
+                package="com.apple.iad.rhq.alert.cleanup"
+                version="1.0"
+                apiVersion="2.0"
+                disabledOnDiscovery="true"
+                xmlns="urn:xmlns:rhq-serverplugin.generic"
+                xmlns:serverplugin="urn:xmlns:rhq-serverplugin"
+                xmlns:c="urn:xmlns:rhq-configuration">
+
+    <serverplugin:help><![CDATA[
+        Contains controls for refiring alerts that may have been ack'd by
+        mistake, or clears alerts for resources that are now currently up.
+        <p/>
+        This plugin is to be used in case of some outage cases, where alerts
+        may be ack'd completely.
+        <p/>
+        The typical use case is to run 'ackup' to clear false alerts, then
+        'refire' to refire any alerts acknowledged by mistake.
+    ]]></serverplugin:help>
+
+    <serverplugin:plugin-component class="AlertCleanup">
+        <serverplugin:control name="ackup" description="Acknowledges alerts for currently up resources.">
+            <serverplugin:parameters>
+                <c:simple-property type="string" default="rhq" name="subject" required="true"
+                  description="User initiating the acknowledgement."/>
+            </serverplugin:parameters>
+        </serverplugin:control>
+        <serverplugin:control name="refire" description="Refire alerts for
+            resources down, if they have an alert definition, and no existing ack'd
+            alerts are found. Also re-enables any found disabled alert definitions.">
+        </serverplugin:control>
+    </serverplugin:plugin-component>
+
+    <!-- TODO should this exist?
+    <serverplugin:scheduled-jobs>
+    </serverplugin:scheduled-jobs>
+    -->
+
+    <!-- TODO Global config?
+    <serverplugin:plugin-configuration>
+    </serverplugin:plugin-configuration>
+    -->
+
+</generic-plugin>

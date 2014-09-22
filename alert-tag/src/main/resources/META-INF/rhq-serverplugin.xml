@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<alert-plugin
+        name="alert-tag"
+        displayName="Alert:Tag"
+        xmlns="urn:xmlns:rhq-serverplugin.alert"
+        xmlns:c="urn:xmlns:rhq-configuration"
+        xmlns:serverplugin="urn:xmlns:rhq-serverplugin"
+        package="com.apple.iad.rhq.alert.tag"
+        description="Alert sender plugin that sends notifications based on resource tagging"
+        version="1.0"
+        >
+
+    <serverplugin:help><![CDATA[
+        <p>
+        Delegates alerting to other alert senders based on tagging of a
+        resource or a resource's group tag. If a resource, or its group, or its
+        parent or parent's group contains a tag as follows:
+        <code>
+           notify:plugin=config
+        </code>
+        Then notification will happen with the plugin 'plugin' using the config 'config'.
+        </p>
+
+        <p>
+        For example:
+        <code>
+           notify:subject=bob_smith
+        </code>
+        The subject 'bob_smith' is the name of the RHQ user.
+        Then using the subject alert plugin, bob_smith's configured email
+        address will be notified.
+        </p>
+
+        <p>
+        Or for example:
+        <code>
+           notify:email=bob_smith@example.com
+        </code>
+        </p>
+
+        <p>
+        One special 'plugin' is 'ack', like so:
+        <code>
+           notify:ack=bob_smith
+        </code>
+        Where 'bob_smith' is the subject in the alert acknowledge field.
+        </p>
+
+        <p>
+        If the resource is tagged as above, then alert is then acknowledged by 'bob_smith'.
+        </p>
+
+        <p>
+        Tag inspection order:
+        <ul>
+        <li> Resource
+        <li> Resource groups (implicit then explicit, each sorted by name)
+        <li> Parent resource
+        <li> Parent resource's group
+        <li> Parent's parent ... etc.
+        </ul>
+        </p>
+        
+        <p>
+        When the first 'notify' tag is seen, in inspection order, all the 'notify' tags are
+        then processed. So you can use multiple email addresses, subjects, and acknowledgements
+        for one resource or group at the same time.
+        (Why stop? It seemed likely you don't need to notify any more users.)
+        </p>
+    ]]>
+    </serverplugin:help>
+
+    <serverplugin:plugin-configuration>
+       <c:simple-property name="defaultTag" type="string" required="true"
+       default="notify:ack=unknown"
+       description="The default notification policy to apply if not defined"/>
+    </serverplugin:plugin-configuration>
+
+    <!-- How does this sender show up in drop downs etc -->
+    <short-name>Tagged Alerting</short-name>
+
+    <!-- Class that does the actual sending -->
+    <plugin-class>TagSender</plugin-class>
+
+
+</alert-plugin>

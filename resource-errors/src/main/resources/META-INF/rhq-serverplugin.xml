@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<generic-plugin name="resource-errors"
+                displayName="Resource:Errors"
+                description="Cleans up resource errors that are old."
+                package="com.apple.iad.rhq.resource.errors"
+                version="1.0"
+                apiVersion="2.0"
+                disabledOnDiscovery="true"
+                xmlns="urn:xmlns:rhq-serverplugin.generic"
+                xmlns:serverplugin="urn:xmlns:rhq-serverplugin"
+                xmlns:c="urn:xmlns:rhq-configuration">
+
+    <serverplugin:help><![CDATA[
+       Plugin for cleaning up resource errors in the system. These
+       accumulate over time when resources have periodic timeouts or fail
+       to start. By default, it cleans up errors older than a week every Sunday.
+    ]]></serverplugin:help>
+
+    <serverplugin:plugin-component class="ResourceErrorCleanup">
+        <serverplugin:control name="cleanup" description="Manually cleans up resource errors">
+            <serverplugin:results>
+                <c:simple-property name="count" required="false" description="Number of entries removed"/>
+            </serverplugin:results>
+        </serverplugin:control>
+        <serverplugin:control name="schedule" description="Cleans up resources with no schedules (due to a bug)">
+        </serverplugin:control>
+    </serverplugin:plugin-component>
+
+    <serverplugin:scheduled-jobs>
+    
+        <c:map-property name="cleanup" description="Cleans up resource errors">
+            <c:simple-property name="scheduleType" type="string" required="true" readOnly="true" default="cron" summary="true" />
+            <!-- S M H Day Mon Weekday [Year] -->
+            <c:simple-property name="scheduleTrigger" type="string" required="true" 
+                    default="0 0 1 ? * SUN" summary="true" description="Quartz Cron expression"/>
+            <c:simple-property name="concurrent" type="boolean" required="true" readOnly="true" default="false" summary="true" description="Whether or not the job can be run multiple times concurrently"/>
+        </c:map-property>
+        
+    </serverplugin:scheduled-jobs>
+
+    <!-- custom global config -->
+    <serverplugin:plugin-configuration>
+        <c:simple-property units="days" type="integer" default="30" name="age" required="true" description="Expiry in days of old resource errors to clean up"/>
+    </serverplugin:plugin-configuration>
+
+</generic-plugin>

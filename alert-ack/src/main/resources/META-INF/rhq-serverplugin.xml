@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<alert-plugin
+        name="alert-ack"
+        displayName="Alert:Ack"
+        xmlns="urn:xmlns:rhq-serverplugin.alert"
+        xmlns:c="urn:xmlns:rhq-configuration"
+        xmlns:serverplugin="urn:xmlns:rhq-serverplugin"
+        package="com.apple.iad.rhq.alert.ack"
+        description="Alert sender plugin that simply acknowledges the alert"
+        >
+
+    <serverplugin:help>
+        Use this to acknowledge an alert. This is useful for automatically
+        ignoring recovery alerts that may be generated, or for ignoring or
+        acknowledging alerts from alert definitions that are now recovered.
+    </serverplugin:help>
+
+
+    <!-- How does this sender show up in drop downs etc -->
+    <short-name>Acknowledge</short-name>
+
+    <!-- Class that does the actual sending -->
+    <plugin-class>AckSender</plugin-class>
+
+    <!-- What can a user configure when defining an alert -->
+    <alert-configuration>
+        <c:simple-property name="subject" type="string" required="true" default="auto"
+          description="The subject to be notified. Note this is not checked."/>
+        <c:simple-property name="recovery" type="boolean" required="true" default="true"
+          description="For recovery alerts, acknowledges the prior alerts as well."/>
+    </alert-configuration>
+
+</alert-plugin>

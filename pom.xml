@@ -16,11 +16,22 @@
     <url>http://apple.com/</url>
   </organization>
 
-  <scm>
-    <connection>scm:git:git@iadgit:rhq-server-plugins</connection>
-    <developerConnection>scm:git:git@iadgit:rhq/server-plugins</developerConnection>
-    <url>http://iadgit.apple.com/git/rhq/plugins</url>
-  </scm>
+   <contributors>
+      <contributor>
+         <name>Elias Ross</name>
+         <email>genman@noderunner.net</email>
+      </contributor>
+   </contributors>
+   <licenses>
+      <license>
+         <name>GNU Lesser General Public License v2.1</name>
+         <url>http://www.spdx.org/licenses/LGPL-2.1</url>
+      </license>
+   </licenses>
+
+   <scm>
+      <developerConnection>scm:git:git@github.com:genman/rhq-server-plugins.git</developerConnection>
+   </scm>
 
    <build>
       <pluginManagement>
@@ -447,17 +458,6 @@
       <sigar.version>1.6.5.132</sigar.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
    </properties>
-
-  <distributionManagement>
-
-    <repository>
-      <!-- Note: for this to work, update your ~/.m2/settings.xml -->
-      <id>iadbuild</id>
-      <name>iAd Ops Local Releases</name>
-      <url>https://iadbuild.apple.com/artifactory/ops-local</url>
-    </repository>
-
-  </distributionManagement>
 
    <modules>
       <!-- modules others depend on -->
